@@ -5,11 +5,11 @@ conn = sqlite3.connect('test2.db')
 
 print("Database opened")
 
-
 # conn.execute("""
-#     DROP TABLE IF EXISTS Stime;  
-#  """)
+#       DROP TABLE IF EXISTS Stime;  
+# """)
 
+# Create tables
 def createTable():
     conn = sqlite3.connect('test2.db')
     cursor = conn.cursor()
@@ -17,38 +17,63 @@ def createTable():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS Stime
         (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        go_in  TEXT NOT NULL,
-        go_out TEXT NOT NULL,
-        user_id INTEGER NOT NULL);
+        go_in  DATETIME NOT NULL,
+        go_out DATETIME NOT NULL);
     ''')
 
-    print("Table created successfully")
+    
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS User
+        (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        user_name  TEXT NOT NULL,
+        user_pass  NOT NULL);
+    ''')
+   
+    
+    print("Tables created successfully")
 
     conn.commit()
     conn.close()
 
 
-conn = sqlite3.connect('test2.db')
-print("Opened database successfully");
+# conn = sqlite3.connect('test2.db')
+# print("Created database successfully");
+
+#createTable()
 
 
-createTable()
-
+# Insert movement data
 def insertData(parameters):
     
     conn = sqlite3.connect('test2.db')
     cursor = conn.cursor()
 
-    cursor.execute("INSERT INTO Stime (go_in, go_out, user_id) VALUES (?, ?, ?)", parameters);
-
-    print ("Records created successfully");     
+    cursor.execute("INSERT INTO Stime (go_in, go_out) \
+                    VALUES (?, ?)", parameters);
+    
+    print("Record inserted successfully");     
     
     conn.commit()
     conn.close()
 
+# Insert user data
+def insertUser(parameters):
+    conn = sqlite3.connect('test2.db')
+    cursor = conn.cursor()
+
+    cursor.execute("INSERT INTO User (user_name, user_pass) \
+                   VALUES (?,?)", parameters);
+
+    print("Record inserted successfully");
+
+    conn.commit()
+    conn.close()
+
+
 #parameters = ("test", "test2")
 #insertData(parameters)
 
+# Print tabel (testing)
 def printTable():
 
     conn = sqlite3.connect("test2.db")
@@ -68,35 +93,3 @@ def printTable():
     conn.commit()
     conn.close()
 
-"""
-i = 1
-while i <= 5:
-    
-    conn.execute("INSERT INTO Stime (go_in, go_out) \
-          VALUES (datetime('now'), datetime('now'))");
-    i += 1
-    time.sleep(1)
-
-conn.commit()
-print ("Records created successfully");
-
-conn.close()
-"""
-"""
-conn = sqlite3.connect("test2.db")
-print("Read all records")
-
-cursor = conn.cursor()
-cursor.execute("SELECT * FROM Stime")
-rows = cursor.fetchall()
-
-print("Company contents")
-for row in rows:
-    print("ID = ", row[0])
-    print("GO_IN = ", row[1])
-    print("GO_OUT = ", row[2])
-    
-
-
-conn.close()
-"""
