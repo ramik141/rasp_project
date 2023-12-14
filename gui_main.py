@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.messagebox as tkMessageBox
 import sqlite3
+import gui_table as tbl_view
 
 
 
@@ -52,29 +53,33 @@ def show_table():
     LoginFrame.destroy()
     tableFrame = Frame(root)
     tableFrame.pack(side=TOP)
-    #label = Label(tableFrame, text="table")
-    #label.grid(row=1)
+    # label = Label(tableFrame, text="table")
+    # label.grid(row=1)
     tree= ttk.Treeview(tableFrame, column=("column1", "column2", "column3", "column4"), show='headings')
     tree.column("#1", anchor="center", width=80)
-    tree.heading("#1", text="Event_ID")
+    tree.heading("#1", text="Event ID")
     tree.column("#2", anchor="center", width=170)
-    tree.heading("#2", text="Start_time")
+    tree.heading("#2", text="Start time")
     tree.column("#3", anchor="center", width=170)
-    tree.heading("#3", text="End_time")
+    tree.heading("#3", text="End time")
     tree.column("#4", anchor="center", width=170)
     tree.heading("#4", text="Username")
 
     tree.pack()
 
-    b1 = tk.Button(tableFrame, text="View data", command=view())
+    b1 = tk.Button(tableFrame, text="View data", command=view(tree))
     b1.pack(side='left', anchor='e', expand='True', pady=10, padx=10)
 
-    b2 = tk.Button(tableFrame, text="Clear", command=clear_all)
+    b2 = tk.Button(tableFrame, text="Clear", command=clear_all(tree))
     b2.pack(side='right', anchor='w', expand='True')
+
+    #return tree
+
+    #tbl_view.App().show_table()
 
 
 # Show data from Booking table
-def view():
+def view(tree):
     
     conn = sqlite3.connect("testi.db")
     cur = conn.cursor()
@@ -87,19 +92,9 @@ def view():
 
 
 # Clear data from the table view
-def clear_all():
+def clear_all(tree):
     for item in tree.get_children():
         tree.delete(item)
-
-
-def changetoRegister(event=None):
-    LoginFrame.destroy()
-    #RegisterForm()
-
-
-def changetoLogin(event=None):
-    #RegisterFrame.destroy()
-    LoginForm()
 
 
 def exit():

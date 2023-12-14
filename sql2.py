@@ -19,48 +19,51 @@ print("Database opened")
 def createTable():
     conn = sqlite3.connect('testi.db')
     cursor = conn.cursor()
-
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS Booking
-        (   event_id    INTEGER  PRIMARY KEY AUTOINCREMENT NOT NULL,
-            start_time  DATETIME NOT NULL,
-            end_time    DATETIME NOT NULL,
-            username    TEXT     NOT NULL);
-        ''')
-
     
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS User
-        (user_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+
+    create_booking_table = """
+    CREATE TABLE IF NOT EXISTS Booking (
+        event_id    INTEGER  PRIMARY KEY AUTOINCREMENT NOT NULL,
+        go_in       DATETIME NOT NULL,
+        go_out      DATETIME NOT NULL,
+        username    TEXT     NOT NULL
+    );
+    """
+    cursor.execute(create_booking_table)
+    
+    
+    create_user_table = """
+    CREATE TABLE IF NOT EXISTS User (
+        user_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         username  TEXT NOT NULL,
         userpass  TEXT NOT NULL,
         lastname TEXT NOT NULL,
-        firstname TEXT NOT NULL);
-    ''')
-   
-    
+        firstname TEXT NOT NULL
+        );
+    """
+    cursor.execute(create_user_table)
+
+
     print("Tables created successfully")
 
     conn.commit()
     conn.close()
 
 
-# conn = sqlite3.connect('test2.db')
-# print("Created database successfully");
-
-#createTable()
-
-
-# Insert raservation data
+# Insert reservation data
 def insertData(parameters):
     
     conn = sqlite3.connect('testi.db')
     cursor = conn.cursor()
-
-    cursor.execute("INSERT INTO Booking (start_time, end_time, username) \
-                    VALUES (?, ?, ?)", parameters);
+        
+    insert_moving_time = """
+    INSERT INTO Booking 
+      (go_in, go_out, username) 
+       VALUES (?, ?, ?);
+    """
+    cursor.execute(insert_moving_time, parameters)
     
-    print("Record inserted successfully");     
+    print("Data inserted successfully");     
     
     conn.commit()
     conn.close()
@@ -71,8 +74,14 @@ def insertUser(parameters):
     conn = sqlite3.connect('testi.db')
     cursor = conn.cursor()
 
-    cursor.execute("INSERT INTO User (username, userpass, lastname, firstname) \
-                   VALUES (?,?,?,?)", parameters);
+    insert_user = """
+    INSERT INTO User
+      (username, userpass, lastname, firstname) 
+       VALUES (?,?,?,?);
+
+    """
+    cursor.execute(insert_user, parameters)
+
 
     print("Record inserted successfully");
 
@@ -88,11 +97,11 @@ def insertUser(parameters):
 def printTable():
 
     conn = sqlite3.connect("testi.db")
-
-    conn.row_factory = sqlite3.Row
-
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM Booking")
+
+    print_booking_table = "SELECT * FROM Booking"
+    cursor.execute(print_booking_table)
+    
     rows = cursor.fetchall()
 
     for row in rows: 
@@ -105,7 +114,8 @@ def printTable():
     conn.close()
 
 
-### Testing ###
+
+#======== Testing ========#
 createTable()
 
 now = datetime.now()
