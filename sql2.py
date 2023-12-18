@@ -27,18 +27,18 @@ def createTable():
         go_in       DATETIME NOT NULL,
         go_out      DATETIME NOT NULL,
         username    TEXT     NOT NULL
-    );
+        );
     """
     cursor.execute(create_booking_table)
     
     
     create_user_table = """
     CREATE TABLE IF NOT EXISTS User (
-        user_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        username  TEXT NOT NULL,
-        userpass  TEXT NOT NULL,
-        lastname TEXT NOT NULL,
-        firstname TEXT NOT NULL
+        user_id     INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        username    TEXT NOT NULL,
+        userpass    TEXT NOT NULL,
+        lastname    TEXT NOT NULL,
+        firstname   TEXT NOT NULL
         );
     """
     cursor.execute(create_user_table)
@@ -78,7 +78,6 @@ def insertUser(parameters):
     INSERT INTO User
       (username, userpass, lastname, firstname) 
        VALUES (?,?,?,?);
-
     """
     cursor.execute(insert_user, parameters)
 
