@@ -131,6 +131,10 @@ parameters = (start_time, end_time, username)
 
 insertData(parameters)
 
+userData = ("test", "test123", "test","test")
+
+insertUser(userData)
+
 printTable()
 
 

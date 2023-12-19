@@ -18,7 +18,7 @@ class App(tk.Tk):
         self._frame = None
         self.geometry("700x450")
         self.title("View data")
-        self.change_frame(TablePage)
+        self.change_frame(LoginPage)
                         
 
         self.menubar = Menu()
