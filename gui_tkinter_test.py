@@ -16,7 +16,7 @@ class App(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
         self._frame = None
-        self.geometry("700x450")
+        self.geometry("800x400")
         self.title("View data")
         self.change_frame(LoginPage)
                         
@@ -24,7 +24,6 @@ class App(tk.Tk):
         self.menubar = Menu()
         self.filemenu = Menu(self.menubar)
         self.filemenu.add_command(label = "Exit", command = self.exit)
-
         self.menubar.add_cascade(label = "File", menu = self.filemenu)
 
         self.config(menu = self.menubar)
@@ -51,8 +50,7 @@ class LoginPage(tk.Frame):
         
         self.username = StringVar()
         self.password = StringVar()
-        #self.lastname = StringVar()
-        #elf.firstname = StringVar()
+      
 
         self.lb_username = Label(self, text="Username: ")
         self.lb_username.grid(row=4, pady=40)
@@ -66,7 +64,9 @@ class LoginPage(tk.Frame):
         self.password.grid(row=5, column=1)
 
         btn_login = Button(self, text="Login", command= self.login)
-        btn_login.grid(row=7, columnspan=2, pady=20)
+        btn_login.grid(row=7, column=1, pady=0)
+        btn_register = Button(self, text="Register", fg="Blue", command= lambda : app.change_frame(RegisterPage))
+        btn_register.grid(row=7, column=2)
         
 
     def login(self):
@@ -81,6 +81,54 @@ class LoginPage(tk.Frame):
                 app.change_frame(TablePage)
             else:
                 self.lb_result1.config(text="Wrong Username or password", fg="red")
+
+
+class RegisterPage(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+
+        self.usernameS = StringVar()
+        self.passwordS = StringVar()
+        self.lastnameS = StringVar()
+        self.firstnameS = StringVar()
+
+        self.lb_username = Label(self, text="Username: ")
+        self.lb_username.grid(row=1, pady=10)
+        self.lb_password = Label(self, text="Password: ")
+        self.lb_password.grid(row=2, pady=10)
+        self.lb_lastname = Label(self, text="Lastname: " )
+        self.lb_lastname.grid(row=3, pady=10)
+        self.lb_firstname = Label(self, text="Firstname: ")
+        self.lb_firstname.grid(row=4, pady=10)
+        self.lb_result2 = Label(self, text="")
+        self.lb_result2.grid(row=5, columnspan=2)
+        self.username = Entry(self, textvariable=self.usernameS)
+        self.username.grid(row=1, column=1)
+        self.password = Entry(self, textvariable=self.passwordS, show="*")
+        self.password.grid(row=2, column=1)
+        self.lastname = Entry(self, textvariable=self.lastnameS)
+        self.lastname.grid(row=3, column=1)
+        self.firstname = Entry(self, textvariable=self.firstnameS)
+        self.firstname.grid(row=4, column=1)
+        self.btn_register = Button(self, text="Register", command=self.register)
+        self.btn_register.grid(row=6, column=1, pady=20)
+        btn_login = Button(self, text="Login", fg="Blue", command= lambda : app.change_frame(LoginPage))
+        btn_login.grid(row=6, column=2) 
+
+    def register(self):
+        database()
+        if self.username.get() == "" or self.password.get() == "" or self.lastname.get() == "" or self.firstname.get() == "":
+            self.lb_result2.config(text="Please complete the required field!", fg="orange")
+        if cursor.fetchone() is not None:
+            self.lb_result2.config(text="Username is already taken", fg="red")
+        else:
+            cursor.execute("INSERT INTO User (username, userpass, lastname, firstname) VALUES(?, ?, ?, ?)", (str(self.username.get()), str(self.password.get()), str(self.lastname.get()), str(self.firstname.get())))
+            conn.commit()
+            self.lb_result2.config(text="Successfully Created!", fg="black")
+        cursor.close()
+        conn.close()
+
+
 
 
 class TablePage(tk.Frame):
@@ -114,11 +162,15 @@ class TablePage(tk.Frame):
 
         # tree_scroll = Scrollbar(tree_frame)
         # tree_scroll.pack(side="right", fill="y")
+        left_frame = Frame(self, width=200, height=400)
+        left_frame.grid(row=0, column=0, padx=5, pady=5)
 
+        right_frame = Frame(self, width=200, height=400)
+        right_frame.grid(row=0, column=1, padx=10, pady=40)
 
         #self.tree= ttk.Treeview(self, columns=("column1", "column2", "column3", "column4"), show='headings', yscroll=tree_scroll.set)
-        self.tree= ttk.Treeview(self, columns=("column1", "column2", "column3", "column4"), show='headings')
-        self.scrollbar = ttk.Scrollbar(self, orient="vertical")
+        self.tree= ttk.Treeview(right_frame, columns=("column1", "column2", "column3", "column4"), show='headings')
+        self.scrollbar = ttk.Scrollbar(right_frame, orient="vertical")
         self.tree.column("#1", anchor="center", width=80)
         self.tree.heading("#1", text="Event ID")
         self.tree.column("#2", anchor="center", width=170)
@@ -129,19 +181,26 @@ class TablePage(tk.Frame):
         self.tree.heading("#4", text="Username")
         self.tree.configure(yscroll=self.scrollbar.set, selectmode="browse")
         self.scrollbar.config(command=self.tree.yview)
-        self.scrollbar.pack(side="right")
+        self.scrollbar.pack(side="right", fill="y")
         
-        self.tree.pack(side=TOP, pady=20)
+        #self.tree.pack(side=TOP, pady=20)
+        self.tree.pack(side="left", fill="both", expand=True)
         
-        view_btn = tk.Button(self, text="View data", command= self.view)
-        view_btn.pack(side='left', anchor='e', expand='True', padx=10)
+        view_btn = tk.Button(left_frame, text="View data", width=8, command= self.view)
+        view_btn.grid(padx=(0, 0), pady=(20, 0))
+        #view_btn.pack(side='left', anchor='e', expand='True', padx=10)
         print("test")
 
-        clear_btn = tk.Button(self, text="Clear", command= self.clear_all)
-        clear_btn.pack(side='left', anchor='w', expand='True')
+        clear_btn = tk.Button(left_frame, text="Clear", command= self.clear_all)
+        clear_btn.config(width=8)
+        clear_btn.grid(padx=(0, 0), pady=(50, 0))
+        #clear_btn.pack(side='left', anchor='50', expand='True')
 
-        sign_out = tk.Button(self, text="Sign out", fg='blue', command = lambda : app.change_frame(LoginPage))
-        sign_out.pack(side='left', anchor='w')
+        sign_out = tk.Button(left_frame, text="Sign out", fg='blue', command = lambda : app.change_frame(LoginPage))
+        sign_out.config(width=8)
+        sign_out.grid(padx=(0, 0), pady=(50, 0))
+        
+        #sign_out.pack(side='left', anchor='w')
         #sign_out.place(rely=1.0, relx=1.0, x=0, y=0, anchor=SE)
 
         
