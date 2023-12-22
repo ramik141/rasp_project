@@ -2,21 +2,11 @@ import sqlite3
 import time
 from datetime import datetime
 
-conn = sqlite3.connect('testi.db')
-
-print("Database opened")
-
-# conn.execute("""
-#         DROP TABLE IF EXISTS Booking;  
-#  """)
-
-# conn.execute("""
-#        DROP TABLE IF EXISTS User;  
-# """)
 
 
 # Create tables
 def createTable():
+    global conn, cursor
     conn = sqlite3.connect('testi.db')
     cursor = conn.cursor()
     
@@ -136,5 +126,19 @@ userData = ("test", "test123", "test","test")
 insertUser(userData)
 
 printTable()
+
+#conn = sqlite3.connect('testi.db')
+
+#print("Database opened")
+
+
+### Don't use these if you don't want to lose your tables ###
+# conn.execute("""
+#         DROP TABLE IF EXISTS Booking;  
+#  """)
+
+# conn.execute("""
+#        DROP TABLE IF EXISTS User;  
+# """)
 
 
